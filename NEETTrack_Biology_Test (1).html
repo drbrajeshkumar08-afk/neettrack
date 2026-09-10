@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEETTrack - Biology Test</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#f5f7fb;color:#172033}
+header{background:#fff;border-bottom:1px solid #e7eaf1;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.logo{font-size:22px;font-weight:800;color:#5b5ce2}.logo span{color:#172033}
+.timer{background:#eeeeff;color:#5b5ce2;padding:10px 16px;border-radius:10px;font-weight:700}
+.container{max-width:1100px;margin:25px auto;padding:0 18px}
+.top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:20px}
+.top h1{font-size:25px;margin-bottom:6px}.top p{color:#78839a;font-size:14px}
+.layout{display:grid;grid-template-columns:1fr 260px;gap:20px}
+.card{background:#fff;border:1px solid #e7eaf1;border-radius:15px;padding:22px;box-shadow:0 8px 30px rgba(30,40,70,.06)}
+.qhead{display:flex;justify-content:space-between;gap:15px;margin-bottom:16px}
+.qnum{font-weight:800;color:#5b5ce2}.qtext{font-size:16px;line-height:1.5;margin-bottom:15px}
+.options{display:grid;gap:10px}
+.option{border:1px solid #dfe3ec;border-radius:10px;padding:13px;cursor:pointer;transition:.2s;background:#fff}
+.option:hover{border-color:#5b5ce2;background:#f8f8ff}
+.option.selected{border-color:#5b5ce2;background:#eeeeff}
+.option input{margin-right:10px}
+.nav{display:flex;justify-content:space-between;margin-top:20px;gap:10px}
+button{border:0;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer}
+.prev{background:#edf0f5;color:#4b5568}.next,.submit{background:#5b5ce2;color:white}
+.submit{display:none;background:#19a974}
+.palette{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+.pbtn{padding:9px 0;background:#edf0f5;color:#5d687b;border-radius:8px}
+.pbtn.answered{background:#dff6ec;color:#13845b}.pbtn.current{outline:2px solid #5b5ce2}
+.info{margin-top:20px;border-top:1px solid #eee;padding-top:15px;color:#78839a;font-size:12px;line-height:1.6}
+.result{display:none;text-align:center}.result h2{font-size:30px;margin:10px}.result .scorebig{font-size:50px;font-weight:800;color:#5b5ce2}.result p{color:#78839a;margin:8px}.result button{margin-top:15px}
+.badge{font-size:11px;color:#78839a}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.side{order:-1}.palette{grid-template-columns:repeat(8,1fr)}}
+</style>
+</head>
+<body>
+<header><div class="logo">NEET<span>Track</span></div><div class="timer" id="timer">30:00</div></header>
+
+<div class="container">
+  <div class="top">
+    <div><h1>Structural Organisation in Animals</h1><p>Biology • Recommended MCQs • Demo Test</p></div>
+    <div class="badge" id="counter">Question 1 of 23</div>
+  </div>
+
+  <div class="layout">
+    <main class="card">
+      <div id="testArea"></div>
+      <div id="result" class="result"></div>
+    </main>
+
+    <aside class="card side">
+      <h3>Questions</h3>
+      <div class="palette" id="palette"></div>
+      <div class="info">
+        <b>How to attempt</b><br>
+        Select one option for each question. Use Next/Previous or the question numbers. Submit at the end.
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const questions = [
+{q:"Assertion (A): In frogs, external fertilization takes place. Reason (R): Frog is an aquatic amphibian.",o:["Both (A) and (R) are true and (R) is the correct explanation of (A).","Both (A) and (R) are true, but (R) is not the correct explanation of (A).","(A) is true, but (R) is false.","Both (A) and (R) are false."],a:1},
+{q:"Assertion (A): Frogs have a short alimentary canal. Reason (R): They are carnivores.",o:["Both (A) and (R) are true and (R) is the correct explanation of (A).","Both (A) and (R) are true, but (R) is not the correct explanation of (A).","(A) is true, but (R) is false.","(A) is false, but (R) is true."],a:0},
+{q:"Assertion (A): Frogs help maintain ecological balance. Reason (R): The species which maintain ecological balance serve as an important link in the food chain and food web.",o:["Both (A) and (R) are true and (R) is the correct explanation of (A).","Both (A) and (R) are true but (R) is not the correct explanation of (A).","(A) is true but (R) is false.","(A) is false but (R) is true."],a:0},
+{q:"Assertion (A): Frogs are considered important for mankind. Reason (R): They eat insects and protect the crops.",o:["Both (A) and (R) are true and (R) is the correct explanation of (A).","Both (A) and (R) are true, but (R) is not the correct explanation of (A).","(A) is true, but (R) is false.","(A) is false, but (R) is true."],a:0},
+{q:"Assertion (A): The digits for forelimbs of a frog possess a web. Reason (R): The webs found in the digits of forelimbs help in swimming.",o:["Both (A) and (R) are true and (R) is the correct explanation of (A).","Both (A) and (R) are true but (R) is not the correct explanation of (A).","(A) is true but (R) is false.","Both (A) and (R) are false."],a:3},
+{q:"Assertion (A): The alimentary canal of a frog is short. Reason (R): Frog is carnivorous.",o:["Both (A) and (R) are true and (R) is the correct explanation of (A).","Both (A) and (R) are true but (R) is not the correct explanation of (A).","(A) is true but (R) is false.","Both (A) and (R) are false."],a:0},
+{q:"Regarding frogs: Statement I: They have the ability to change the colour to hide them from their enemies (camouflage). Statement II: They undergo summer sleep called hibernation as well as winter sleep called aestivation.",o:["Only Statement II is correct.","Only Statement I is correct.","Both Statement I and Statement II are incorrect.","Both Statement I and Statement II are correct."],a:1},
+{q:"Match: A. Copulatory pad in male frog; B. In hibernation, frog respires; C. Optic lobes in a frog are a part of; D. Bidder’s canal. Select the correct code.",o:["A-P, B-R, C-X, D-W","A-P, B-R, C-U, D-X","A-R, B-P, C-T, D-X","A-Q, B-S, C-T, D-W"],a:1},
+{q:"Which of the following statement is incorrect regarding a frog?",o:["Digestive system without salivary gland","Respiratory system without intercostal muscles","Circulatory system without SA node","Reproductive system without copulatory organs"],a:3},
+{q:"On land, a frog respires by",o:["Skin only","Skin and buccal cavity only","Skin, lungs and buccal cavity","Lungs only"],a:2},
+{q:"A male frog can be distinguished externally from a female frog by all of the following features except",o:["Presence of sound producing vocal sacs","Presence of copulatory pad on the first digit of the forelimbs","Ureters carry both sperms and urine in male frog","Testes are adhered to the upper part of kidneys by a double fold of peritoneum called mesorchium"],a:3},
+{q:"Which of the following structure acts as urinogenital duct in male frogs?",o:["Urethra","Ureter","Urinary bladder","Vasa efferentia"],a:1},
+{q:"Adult frog (Rana tigrina) cannot respire through",o:["Moist skin","Lungs","Gills","Buccal cavity"],a:2},
+{q:"A thin-walled, triangular chamber attached dorsally to heart of a frog is known as",o:["Truncus arteriosus","Sinus venosus","Atrium","Ventricle"],a:2},
+{q:"In frog, oxygen dissolved in water can be taken by",o:["External nares","Spiracles","Buccal cavity","Skin"],a:3},
+{q:"Which of the following is incorrect statement about frog?",o:["Body is divisible into head and trunk","The skin is moist without scales","A tympanum represents the ear","Fore limbs have four digits with webs and hind limbs have five digits without webs"],a:3},
+{q:"Frogs can protect itself from enemies by",o:["Clawed toes","Spiny skin","Camouflage","Sharp teeth"],a:2},
+{q:"In a frog, heart is enclosed within a two-layered sac called",o:["Mesorchium","Pericardium","Pleura","Conus arteriosus"],a:1},
+{q:"Select the incorrect match with respect to animals and the type of nitrogenous waste excreted by them.",o:["Rana — Uricotelic","Pheretima — Ureotelic","Periplaneta — Uricotelic","Tadpole larva of frog — Ammonotelic"],a:0},
+{q:"Internal fertilization is not seen in",o:["Birds","Reptiles","Frog","Mammals"],a:2},
+{q:"Bidder’s canals is/are present in",o:["Male frog","Both male and female frog","Female cockroach","Bone of mammals"],a:0},
+{q:"The biological adaptation that allows frogs to obtain water for their survival during conditions of water scarcity is the",o:["presence of a modified tongue that acts like a sponge to suck water from damp soils.","presence of water channels in the skin by which they absorb water from their surroundings.","presence of ciliated esophagus that helps in separating water from ingested particulate matter.","selective feeding on plants with a large amount of water that would fulfill the water requirement."],a:1},
+{q:"Haemoglobin is dissolved in blood plasma of",o:["Frog","Rabbit","Cockroach","Earthworm"],a:3}
+];
+
+let current=0;
+let answers=Array(questions.length).fill(null);
+let seconds=1800;
+let submitted=false;
+
+function renderPalette(){
+  const p=document.getElementById("palette");
+  p.innerHTML="";
+  questions.forEach((_,i)=>{
+    const b=document.createElement("button");
+    b.className="pbtn"+(answers[i]!==null?" answered ":"")+(i===current?" current":"");
+    b.textContent=i+1;
+    b.onclick=()=>{current=i;renderQuestion()};
+    p.appendChild(b);
+  });
+}
+function renderQuestion(){
+  if(submitted)return;
+  const x=questions[current];
+  document.getElementById("counter").textContent=`Question ${current+1} of ${questions.length}`;
+  let h=`<div class="qhead"><span class="qnum">Q${current+1}</span><span class="badge">Single correct</span></div>`;
+  h+=`<div class="qtext">${x.q}</div><div class="options">`;
+  x.o.forEach((opt,i)=>{
+    h+=`<label class="option ${answers[current]===i?"selected":""}"><input type="radio" name="option" ${answers[current]===i?"checked":""} onchange="choose(${i})"> ${i+1}. ${opt}</label>`;
+  });
+  h+=`</div><div class="nav">`;
+  h+=`<button class="prev" onclick="prevQ()" ${current===0?"disabled":""}>← Previous</button>`;
+  if(current===questions.length-1) h+=`<button class="submit" style="display:block" onclick="submitTest()">Submit Test</button>`;
+  else h+=`<button class="next" onclick="nextQ()">Next →</button>`;
+  h+=`</div>`;
+  document.getElementById("testArea").innerHTML=h;
+  renderPalette();
+}
+function choose(i){answers[current]=i;renderQuestion()}
+function nextQ(){if(current<questions.length-1){current++;renderQuestion()}}
+function prevQ(){if(current>0){current--;renderQuestion()}}
+function submitTest(){
+  if(!confirm("Submit the test now?"))return;
+  submitted=true;
+  clearInterval(clock);
+  let correct=0;
+  answers.forEach((a,i)=>{if(a===questions[i].a)correct++});
+  const attempted=answers.filter(a=>a!==null).length;
+  const percent=Math.round(correct/questions.length*100);
+  document.getElementById("testArea").style.display="none";
+  const r=document.getElementById("result");
+  r.style.display="block";
+  r.innerHTML=`<div class="badge">TEST COMPLETED</div><h2>Your Result</h2><div class="scorebig">${correct}/${questions.length}</div><p>${percent}% correct • ${attempted} attempted • ${questions.length-attempted} skipped</p><button class="next" onclick="location.reload()">Retake Test</button>`;
+  document.getElementById("counter").textContent="Result";
+  document.getElementById("palette").innerHTML="";
+}
+function tick(){
+  if(submitted)return;
+  const m=Math.floor(seconds/60),s=seconds%60;
+  document.getElementById("timer").textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  if(seconds<=0){submitTest()} else seconds--;
+}
+const clock=setInterval(tick,1000);
+tick();renderQuestion();
+</script>
+</body>
+</html>

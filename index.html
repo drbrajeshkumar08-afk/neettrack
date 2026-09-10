@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>NEET Progress Dashboard</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #78839a;
+      --primary: #5b5ce2;
+      --primary-light: #eeeeff;
+      --green: #19a974;
+      --orange: #f59e0b;
+      --red: #ef4444;
+      --border: #e7eaf1;
+      --shadow: 0 8px 30px rgba(30, 40, 70, 0.06);
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 250px;
+      background: #fff;
+      border-right: 1px solid var(--border);
+      padding: 25px 18px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+    }
+
+    .logo {
+      font-size: 23px;
+      font-weight: 800;
+      color: var(--primary);
+      padding: 0 12px 30px;
+    }
+
+    .logo span {
+      color: #172033;
+    }
+
+    .menu-title {
+      color: #a0a7b5;
+      font-size: 11px;
+      font-weight: 700;
+      margin: 15px 12px 10px;
+      text-transform: uppercase;
+    }
+
+    .menu {
+      list-style: none;
+    }
+
+    .menu li {
+      margin-bottom: 5px;
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      text-decoration: none;
+      color: #6e788d;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .menu a:hover,
+    .menu a.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .icon {
+      width: 21px;
+      text-align: center;
+      font-size: 17px;
+    }
+
+    /* MAIN */
+    .main {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 28px 35px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .welcome h1 {
+      font-size: 25px;
+      margin-bottom: 7px;
+    }
+
+    .welcome p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+    }
+
+    .profile-info strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .profile-info span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* SUMMARY */
+    .summary {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 21px;
+      box-shadow: var(--shadow);
+    }
+
+    .score-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .small-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 9px;
+    }
+
+    .big-number {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+
+    .green-text {
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .circle {
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      background: conic-gradient(
+        var(--primary) 0deg 280deg,
+        #eceefe 280deg 360deg
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .circle::after {
+      content: "";
+      position: absolute;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .circle span {
+      z-index: 2;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .stat-icon {
+      width: 39px;
+      height: 39px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-light);
+      margin-bottom: 14px;
+      font-size: 18px;
+    }
+
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 22px;
+      margin-bottom: 22px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .card-header h2 {
+      font-size: 17px;
+    }
+
+    .card-header span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* CHART */
+    .chart {
+      height: 250px;
+      display: flex;
+      align-items: flex-end;
+      gap: 15px;
+      padding: 20px 5px 5px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .bar {
+      flex: 1;
+      min-width: 20px;
+      background: linear-gradient(
+        to top,
+        var(--primary),
+        #8586f2
+      );
+      border-radius: 7px 7px 0 0;
+      position: relative;
+      transition: 0.3s;
+    }
+
+    .bar:hover {
+      opacity: 0.75;
+    }
+
+    .bar-label {
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .bar-value {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    /* SUBJECT */
+    .subject {
+      margin-bottom: 21px;
+    }
+
+    .subject:last-child {
+      margin-bottom: 0;
+    }
+
+    .subject-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .subject-top span:last-child {
+      font-weight: bold;
+    }
+
+    .progress {
+      height: 8px;
+      border-radius: 20px;
+      background: #edf0f5;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 20px;
+    }
+
+    .physics {
+      width: 74%;
+      background: #6366f1;
+    }
+
+    .chemistry {
+      width: 82%;
+      background: #19a974;
+    }
+
+    .biology {
+      width: 91%;
+      background: #f59e0b;
+    }
+
+    /* LOWER GRID */
+    .lower-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 22px;
+    }
+
+    /* TABLE */
+    .tests {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .tests th {
+      text-align: left;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tests td {
+      padding: 14px 8px;
+      font-size: 12px;
+      border-bottom: 1px solid #f0f1f5;
+    }
+
+    .score {
+      font-weight: bold;
+    }
+
+    .good {
+      color: var(--green);
+    }
+
+    .average {
+      color: var(--orange);
+    }
+
+    /* WEAK CHAPTER */
+    .weak-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 0;
+      border-bottom: 1px solid #f0f1f5;
+    }
+
+    .weak-item:last-child {
+      border-bottom: 0;
+    }
+
+    .weak-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .subject-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .weak-name {
+      font-size: 13px;
+    }
+
+    .weak-percent {
+      font-size: 12px;
+      color: var(--red);
+      font-weight: bold;
+    }
+
+    /* STREAK */
+    .streak {
+      margin-top: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(
+        120deg,
+        #5b5ce2,
+        #7778eb
+      );
+      color: white;
+      border-radius: 15px;
+      padding: 22px;
+    }
+
+    .streak h2 {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .streak p {
+      font-size: 12px;
+      opacity: 0.85;
+    }
+
+    .fire {
+      font-size: 42px;
+    }
+
+    /* MOBILE */
+    .mobile-header {
+      display: none;
+    }
+
+    @media (max-width: 1100px) {
+      .summary {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid,
+      .lower-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 18px;
+      }
+
+      .mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+      }
+
+      .mobile-logo {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--primary);
+      }
+
+      .topbar {
+        margin-bottom: 20px;
+      }
+
+      .profile-info {
+        display: none;
+      }
+
+      .welcome h1 {
+        font-size: 21px;
+      }
+
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 17px;
+      }
+
+      .chart {
+        height: 210px;
+        gap: 7px;
+      }
+
+      .bar-label {
+        font-size: 9px;
+      }
+
+      .tests {
+        min-width: 520px;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="logo">
+      NEET<span>Track</span>
+    </div>
+
+    <div class="menu-title">Main</div>
+
+    <ul class="menu">
+      <li>
+        <a href="#" class="active">
+          <span class="icon">📊</span>
+          Progress
+        </a>
+      </li>
+
+      <li>
+        <a href="#">
+          <span class="icon">📝</span>
+          Tests
+        </a>
+      </li>
+
+      <li>
+        <a href="#">
+          <span class="icon">📚</span>
+          Study
+        </a>
+      </li>
+
+      <li>
+        <a href="#">
+          <span class="icon">🎯</span>
+          Goals
+        </a>
+      </li>
+    </ul>
+
+    <div class="menu-title">Account</div>
+
+    <ul class="menu">
+      <li>
+        <a href="#">
+          <span class="icon">👤</span>
+          Profile
+        </a>
+      </li>
+
+      <li>
+        <a href="#">
+          <span class="icon">⚙️</span>
+          Settings
+        </a>
+      </li>
+    </ul>
+
+  </aside>
+
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="mobile-header">
+      <div class="mobile-logo">NEETTrack</div>
+      <div class="avatar">B</div>
+    </div>
+
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+
+      <div class="welcome">
+        <h1>Good Morning, Student 👋</h1>
+        <p>Here's your NEET preparation progress.</p>
+      </div>
+
+      <div class="profile">
+
+        <div class="avatar">B</div>
+
+        <div class="profile-info">
+          <strong>NEET Aspirant</strong>
+          <span>NEET 2027</span>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+    <section class="summary">
+
+      <div class="card score-card">
+
+        <div>
+          <div class="small-label">Overall Score</div>
+          <div class="big-number">682 / 720</div>
+          <div class="green-text">↑ 6.8% from last test</div>
+        </div>
+
+        <div class="circle">
+          <span>94.7%</span>
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="stat-icon">🎯</div>
+
+        <div class="small-label">Accuracy</div>
+
+        <div class="big-number">89%</div>
+
+        <div class="green-text">Excellent</div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="stat-icon">📝</div>
+
+        <div class="small-label">Tests Attempted</div>
+
+        <div class="big-number">48</div>
+
+        <div class="green-text">+4 this month</div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="stat-icon">⏱️</div>
+
+        <div class="small-label">Study Time</div>
+
+        <div class="big-number">186h</div>
+
+        <div class="green-text">This month</div>
+
+      </div>
+
+    </section>
+
+
+    <!-- GRAPH + SUBJECT -->
+    <section class="grid">
+
+      <div class="card">
+
+        <div class="card-header">
+          <h2>Test Performance</h2>
+          <span>Last 8 Tests</span>
+        </div>
+
+        <div class="chart">
+
+          <div class="bar" style="height: 55%;">
+            <span class="bar-value">420</span>
+            <span class="bar-label">T1</span>
+          </div>
+
+          <div class="bar" style="height: 63%;">
+            <span class="bar-value">468</span>
+            <span class="bar-label">T2</span>
+          </div>
+
+          <div class="bar" style="height: 58%;">
+            <span class="bar-value">432</span>
+            <span class="bar-label">T3</span>
+          </div>
+
+          <div class="bar" style="height: 72%;">
+            <span class="bar-value">528</span>
+            <span class="bar-label">T4</span>
+          </div>
+
+          <div class="bar" style="height: 68%;">
+            <span class="bar-value">504</span>
+            <span class="bar-label">T5</span>
+          </div>
+
+          <div class="bar" style="height: 80%;">
+            <span class="bar-value">576</span>
+            <span class="bar-label">T6</span>
+          </div>
+
+          <div class="bar" style="height: 86%;">
+            <span class="bar-value">620</span>
+            <span class="bar-label">T7</span>
+          </div>
+
+          <div class="bar" style="height: 95%;">
+            <span class="bar-value">682</span>
+            <span class="bar-label">T8</span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="card-header">
+          <h2>Subject Progress</h2>
+        </div>
+
+
+        <div class="subject">
+
+          <div class="subject-top">
+            <span>Physics</span>
+            <span>74%</span>
+          </div>
+
+          <div class="progress">
+            <div class="progress-fill physics"></div>
+          </div>
+
+        </div>
+
+
+        <div class="subject">
+
+          <div class="subject-top">
+            <span>Chemistry</span>
+            <span>82%</span>
+          </div>
+
+          <div class="progress">
+            <div class="progress-fill chemistry"></div>
+          </div>
+
+        </div>
+
+
+        <div class="subject">
+
+          <div class="subject-top">
+            <span>Biology</span>
+            <span>91%</span>
+          </div>
+
+          <div class="progress">
+            <div class="progress-fill biology"></div>
+          </div>
+
+        </div>
+
+
+        <div class="streak">
+
+          <div>
+            <h2>🔥 17 Days</h2>
+            <p>Current study streak</p>
+          </div>
+
+          <div class="fire">🔥</div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- LOWER -->
+    <section class="lower-grid">
+
+
+      <!-- RECENT TESTS -->
+      <div class="card">
+
+        <div class="card-header">
+          <h2>Recent Tests</h2>
+          <span>View all →</span>
+        </div>
+
+        <div class="table-wrap">
+
+          <table class="tests">
+
+            <thead>
+              <tr>
+                <th>Test</th>
+                <th>Date</th>
+                <th>Score</th>
+                <th>Accuracy</th>
+                <th>Rank</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr>
+                <td>Full Syllabus Test 08</td>
+                <td>10 Sep</td>
+                <td class="score good">682</td>
+                <td>89%</td>
+                <td>1,245</td>
+              </tr>
+
+              <tr>
+                <td>Biology Test 12</td>
+                <td>08 Sep</td>
+                <td class="score good">342</td>
+                <td>92%</td>
+                <td>842</td>
+              </tr>
+
+              <tr>
+                <td>Physics Chapter Test</td>
+                <td>06 Sep</td>
+                <td class="score average">146</td>
+                <td>76%</td>
+                <td>3,218</td>
+              </tr>
+
+              <tr>
+                <td>Chemistry Test 09</td>
+                <td>04 Sep</td>
+                <td class="score good">164</td>
+                <td>86%</td>
+                <td>1,927</td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+      <!-- WEAK CHAPTERS -->
+      <div class="card">
+
+        <div class="card-header">
+          <h2>Weak Chapters</h2>
+          <span>Improve these</span>
+        </div>
+
+
+        <div class="weak-item">
+
+          <div class="weak-left">
+
+            <div class="subject-dot"
+                 style="background:#6366f1;">
+            </div>
+
+            <div class="weak-name">
+              Rotational Motion
+            </div>
+
+          </div>
+
+          <div class="weak-percent">
+            48%
+          </div>
+
+        </div>
+
+
+        <div class="weak-item">
+
+          <div class="weak-left">
+
+            <div class="subject-dot"
+                 style="background:#19a974;">
+            </div>
+
+            <div class="weak-name">
+              Organic Chemistry
+            </div>
+
+          </div>
+
+          <div class="weak-percent">
+            56%
+          </div>
+
+        </div>
+
+
+        <div class="weak-item">
+
+          <div class="weak-left">
+
+            <div class="subject-dot"
+                 style="background:#f59e0b;">
+            </div>
+
+            <div class="weak-name">
+              Plant Physiology
+            </div>
+
+          </div>
+
+          <div class="weak-percent">
+            61%
+          </div>
+
+        </div>
+
+
+        <div class="weak-item">
+
+          <div class="weak-left">
+
+            <div class="subject-dot"
+                 style="background:#6366f1;">
+            </div>
+
+            <div class="weak-name">
+              Electrostatics
+            </div>
+
+          </div>
+
+          <div class="weak-percent">
+            64%
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+</body>
+</html>
